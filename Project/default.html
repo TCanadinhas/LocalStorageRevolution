@@ -17,12 +17,19 @@
 	var canvas = document.getElementById('tela');
 	var context = canvas.getContext('2d');
 	
-	var x = (canvas.width / 2) - (w/2);
-	var y = (canvas.height / 2) - (h/2);
-	var w = 40;
-	var h = w;
-	var color = '#CC0099';
-	var speed = 10;
+    var start = false;
+    
+    var menu = new Image();
+    menu.src = 'menu.png';
+    
+	var playerX = (canvas.width / 2) - (playerW/2);
+	var playerY = (canvas.height / 2) - (playerH/2);
+	var playerW = 40;
+	var playerH = playerW;
+	var playerColor = '#CC0099';
+	var playerSpeed = 10;
+    
+    
 	
 	var comandos = new Image();
 	comandos.src = 'tela.png';
@@ -32,9 +39,9 @@
 	var moveRight = false;
 	var moveDown = false;
 	
-	if(localStorage.getItem('xRect') != (undefined || null)) x = parseInt(localStorage.getItem('xRect'));
+	if(localStorage.getItem('xRect') != (undefined || null)) playerX = parseInt(localStorage.getItem('xRect'));
 	
-	if(localStorage.getItem('yRect') != (undefined || null)) y = parseInt(localStorage.getItem('yRect'));
+	if(localStorage.getItem('yRect') != (undefined || null)) playerY = parseInt(localStorage.getItem('yRect'));
 	
 	function keyDown(e)
 	{
@@ -43,27 +50,26 @@
 		{
 			case 37:
 				moveLeft = true;
-				console.log('moveLeft: '+ moveLeft);
 				break;
 				
 			case 38:
 				moveUp = true;
-				console.log('moveUp: '+ moveUp);
 				break;
 				
 			case 39:
 				moveRight = true;
-				console.log('moveRight: '+ moveRight);
 				break;
 				
 			case 40:
 				moveDown = true;
-				console.log('moveDown: '+ moveDown);
 				break;
 				
 			case 82:
 				reset();
 				break;
+            
+            case 13:
+                start = true;
 				
 			default:
 				console.log('keyDown: '+ e.keyCode);
@@ -79,22 +85,18 @@
 		{
 			case 37:
 				moveLeft = false;
-				//console.log('moveLeft: '+ moveLeft);
 				break;
 				
 			case 38:
 				moveUp = false;
-				//console.log('moveUp: '+ moveUp);
 				break;
 				
 			case 39:
 				moveRight = false;
-				//console.log('moveRight: '+ moveRight);
 				break;
 				
 			case 40:
 				moveDown = false;
-				//console.log('moveDown: '+ moveDown);
 				break;
 		}
 	}
@@ -104,58 +106,67 @@
 	
 	function reset()
 	{
-		console.log('reset');
-		x = (canvas.width / 2) - (w/2);
-		y = (canvas.height / 2) - (h/2);
+		playerX = (canvas.width / 2) - (playerW/2);
+		playerY = (canvas.height / 2) - (playerH/2);
 	}
 	
 	function move()
 	{		
-		if(moveLeft) x -= speed;
+		if(moveLeft) playerX -= playerSpeed;
 
-		if(moveUp) y -= speed;
+		if(moveUp) playerY -= playerSpeed;
 		
-		if(moveRight) x += speed;
+		if(moveRight) playerX += playerSpeed;
 		
-		if(moveDown) y += speed;
+		if(moveDown) playerY += playerSpeed;
 	}
 	
 	
 	function colision()
 	{
-		if(x < 0) x = 0;
-		if(x + w > canvas.width) x = canvas.width - w;
+		if(playerX < 0) playerX = 0;
+		if(playerX + playerW > canvas.width) playerX = canvas.width - playerW;
 		
-		if(y < 0) y = 0;
-		if(y + h > canvas.height) y = canvas.height - h;
+		if(playerY < 0) playerY = 0;
+		if(playerY + playerH > canvas.height) playerY = canvas.height - playerH;
 	}
 	
 	function update()
 	{
-		localStorage.setItem('xRect',x);
-		localStorage.setItem('yRect',y);
+		localStorage.setItem('xRect',playerX);
+		localStorage.setItem('yRect',playerY);
 		move();
 		colision();
 	}
 	
-	function drawPlay(x,y,w,h,color) 
+    function drawMenu()
+    {
+        context.drawImage(menu,0,0,canvas.width,canvas.height);
+    }
+    
+	function drawObject(x,y,w,h,color) 
 	{
 		context.fillStyle = color;
 		context.fillRect(x,y,w,h);
     }
 	
-	function draw()
+	function drawGame()
 	{
 		context.clearRect(0,0,canvas.width,canvas.height);
-		drawPlay(x,y,w,h,color);
+		drawObject(playerX,playerY,playerW,playerH,playerColor);
 		context.drawImage(comandos,0,0,canvas.width,canvas.height);
 	}
 	
 	function loop()
 	{
-		draw();
-		update();
+		drawMenu();
+        
+        if(start)
+        {
+            drawGame();
+            update();
 		
+        }
 		setTimeout(loop,30)
 	}
 	
