@@ -17,6 +17,9 @@
 	var canvas = document.getElementById('tela');
 	var context = canvas.getContext('2d');
 	
+    var countFade = 150;
+    console.log(countFade);
+    
     var start = false;
     
     var menu = new Image();
@@ -29,7 +32,11 @@
 	var playerColor = '#CC0099';
 	var playerSpeed = 10;
     
-    
+    var bagX = Math.floor(Math.random() * (canvas.width - bagW) + bagW);
+	var bagY = Math.floor(Math.random() * (canvas.height - bagY) + bagY);
+	var bagW = 15;
+	var bagH = bagW;
+	var bagColor = '#CC0099';
 	
 	var comandos = new Image();
 	comandos.src = 'tela.png';
@@ -136,6 +143,7 @@
 		localStorage.setItem('xRect',playerX);
 		localStorage.setItem('yRect',playerY);
 		move();
+        countFade--;
 		colision();
 	}
 	
@@ -153,8 +161,11 @@
 	function drawGame()
 	{
 		context.clearRect(0,0,canvas.width,canvas.height);
+        
 		drawObject(playerX,playerY,playerW,playerH,playerColor);
-		context.drawImage(comandos,0,0,canvas.width,canvas.height);
+        drawObject(bagX,bagY,bagW,bagH,bagColor);
+		
+        context.drawImage(comandos,0,0,canvas.width,canvas.height);
 	}
 	
 	function loop()
